@@ -10,7 +10,7 @@ namespace Ui {
 class MainWindow;
 }
 
-#define MEMORY_TYPE unsigned char
+#define MEMORY_TYPE quint16
 
 class MainWindow : public QMainWindow
 {
