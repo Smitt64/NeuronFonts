@@ -35,7 +35,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
             QByteArray data(IMG_DATA_SIZE, 0);
 
-            int k[29][29];
+            int k[IMG_SIZE][IMG_SIZE];
             for (int x = 0; x < IMG_SIZE; x++)
             {
                 for (int y = 0; y < IMG_SIZE; y++)
@@ -64,6 +64,10 @@ MainWindow::MainWindow(QWidget *parent) :
         neuro_web.push_back(new Neuron<int,IMG_SIZE,IMG_SIZE>());
     }
 
+    clearMemoryAction = new QAction(tr("Forget the letter"), ui->listWidget);
+    ui->listWidget->addAction(clearMemoryAction);
+    ui->listWidget->setContextMenuPolicy(Qt::ActionsContextMenu);
+
     start();
 
 #if QT_VERSION >= 0x050000 && defined(Q_OS_WIN)
@@ -77,11 +81,46 @@ MainWindow::MainWindow(QWidget *parent) :
     }
     //centralWidget()->setStyleSheet(QString("QWidget#centralWidget {background: %1}").arg(palette.color(QPalette::Window).name()));
 #endif
+
+    connect(clearMemoryAction, SIGNAL(triggered(bool)), SLOT(onClearMemoryAction()));
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::onClearMemoryAction()
+{
+    QListWidgetItem *item = ui->listWidget->currentItem();
+
+    if (!item)
+        return;
+
+    qDebug() << "if (!item)";
+    int memid = item->text().at(0).unicode() - UNICODE_A;
+
+    int k[IMG_SIZE][IMG_SIZE];
+    for (int x = 0; x < IMG_SIZE; x++)
+    {
+        for (int y = 0; y < IMG_SIZE; y++)
+        {
+            k[x][y] = 255;
+        }
+    }
+
+    QSqlQuery q;
+    QByteArray data(IMG_DATA_SIZE, 0);
+    data.setRawData((const char*)k, IMG_DATA_SIZE);
+
+    q.prepare("update memory set mem = :mem where id = :id");
+    q.bindValue(":id", memid);
+    q.bindValue(":mem", data);
+
+    q.exec();
+
+    start();
+    on_listWidget_itemDoubleClicked(item);
 }
 
 void MainWindow::start(bool onlyclear)

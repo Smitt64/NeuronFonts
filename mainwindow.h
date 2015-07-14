@@ -21,6 +21,7 @@ public:
 private slots:
     void on_pushButton_clicked();
     void on_listWidget_itemDoubleClicked(QListWidgetItem *item);
+    void onClearMemoryAction();
 
 private:
     void start(bool onlyclear = false);
@@ -29,6 +30,7 @@ private:
     QDir memdir;
     QList<Neuron<int,29,29>*> neuro_web;
 
+    QAction *clearMemoryAction;
 #if QT_VERSION >= 0x050000 && defined(Q_OS_WIN)
     QMargins margin;
 #endif
