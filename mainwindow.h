@@ -10,6 +10,8 @@ namespace Ui {
 class MainWindow;
 }
 
+#define MEMORY_TYPE unsigned char
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -28,7 +30,7 @@ private:
     void recognize();
     Ui::MainWindow *ui;
     QDir memdir;
-    QList<Neuron<int,29,29>*> neuro_web;
+    QList<Neuron<MEMORY_TYPE,29,29>*> neuro_web;
 
     QAction *clearMemoryAction;
 #if QT_VERSION >= 0x050000 && defined(Q_OS_WIN)

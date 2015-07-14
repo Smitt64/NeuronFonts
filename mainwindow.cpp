@@ -11,7 +11,7 @@
 #include <QSysInfo>
 
 #define IMG_SIZE 29
-#define IMG_DATA_SIZE (IMG_SIZE * IMG_SIZE * sizeof(int))
+#define IMG_DATA_SIZE (IMG_SIZE * IMG_SIZE * sizeof(MEMORY_TYPE))
 #define UNICODE_A 0x0410
 
 #if QT_VERSION >= 0x050000
@@ -32,10 +32,11 @@ MainWindow::MainWindow(QWidget *parent) :
         if (!db.tables().contains("memory"))
         {
             QSqlQuery q("CREATE TABLE memory (id  INTEGER NOT NULL,mem  BLOB NOT NULL,PRIMARY KEY (id ASC))");
+            q.exec();
 
             QByteArray data(IMG_DATA_SIZE, 0);
 
-            int k[IMG_SIZE][IMG_SIZE];
+            MEMORY_TYPE k[IMG_SIZE][IMG_SIZE];
             for (int x = 0; x < IMG_SIZE; x++)
             {
                 for (int y = 0; y < IMG_SIZE; y++)
@@ -61,7 +62,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     for (int i = 0; i < 32; i++)
     {
-        neuro_web.push_back(new Neuron<int,IMG_SIZE,IMG_SIZE>());
+        neuro_web.push_back(new Neuron<MEMORY_TYPE,IMG_SIZE,IMG_SIZE>());
     }
 
     clearMemoryAction = new QAction(tr("Forget the letter"), ui->listWidget);
@@ -97,10 +98,9 @@ void MainWindow::onClearMemoryAction()
     if (!item)
         return;
 
-    qDebug() << "if (!item)";
     int memid = item->text().at(0).unicode() - UNICODE_A;
 
-    int k[IMG_SIZE][IMG_SIZE];
+    MEMORY_TYPE k[IMG_SIZE][IMG_SIZE];
     for (int x = 0; x < IMG_SIZE; x++)
     {
         for (int y = 0; y < IMG_SIZE; y++)
@@ -152,7 +152,7 @@ void MainWindow::start(bool onlyclear)
 
 void MainWindow::recognize()
 {
-    int img[IMG_SIZE][IMG_SIZE];
+    MEMORY_TYPE img[IMG_SIZE][IMG_SIZE];
     int max = 0;
     int max_n;
     max_n = 0;
