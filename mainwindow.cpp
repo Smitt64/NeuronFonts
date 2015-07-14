@@ -12,6 +12,7 @@
 
 #define IMG_SIZE 29
 #define IMG_DATA_SIZE (IMG_SIZE * IMG_SIZE * sizeof(int))
+#define UNICODE_A 0x0410
 
 #if QT_VERSION >= 0x050000
 #include <QtWinExtras>
@@ -65,7 +66,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     start();
 
-    // немного понтов
 #if QT_VERSION >= 0x050000 && defined(Q_OS_WIN)
     if (QSysInfo::windowsVersion() >= QSysInfo::WV_VISTA && QSysInfo::windowsVersion() <= QSysInfo::WV_WINDOWS10)
     {
@@ -94,7 +94,7 @@ void MainWindow::start(bool onlyclear)
         neuro_web[i]->name = QString::number(i);
 
 
-        ui->listWidget->addItem(QChar(0x0410 + i));
+        ui->listWidget->addItem(QChar(UNICODE_A + i));
 
         if (!onlyclear)
         {
@@ -180,12 +180,20 @@ void MainWindow::recognize()
         }
     }
 
-    QString s = QInputDialog::getText(this, tr("I was wrong?"), tr("I think it is: %1").arg(QChar(0x0410 + max_n)), QLineEdit::Normal, QChar(0x0410 + max_n));
+    QString s = QInputDialog::getText(this, tr("I was wrong?"), tr("I think it is: %1").arg(QChar(UNICODE_A + max_n)), QLineEdit::Normal, QChar(UNICODE_A + max_n));
 
     if (s.isEmpty())
         return;
 
-    int newid = s.at(0).toUpper().unicode() - 0x0410;
+    QChar ch = s.at(0).toUpper();
+
+    if (!ch.isLetter())
+        return;
+
+    if (ch.unicode() < UNICODE_A || ch.unicode() > UNICODE_A + 32)
+        return;
+
+    int newid = ch.unicode() - UNICODE_A;
 
     QSqlQuery q;
     QByteArray data(IMG_DATA_SIZE, 0);
@@ -220,7 +228,7 @@ void MainWindow::on_listWidget_itemDoubleClicked(QListWidgetItem *item)
 {
     QImage mapout(QSize(IMG_SIZE, IMG_SIZE), QImage::Format_RGB32);
 
-    int newid = item->text().at(0).toUpper().unicode() - 0x0410;
+    int newid = item->text().at(0).toUpper().unicode() - UNICODE_A;
     for (int x = 0; x < IMG_SIZE; x++)
     {
         for (int y = 0; y < IMG_SIZE; y++)
@@ -230,9 +238,4 @@ void MainWindow::on_listWidget_itemDoubleClicked(QListWidgetItem *item)
     }
     mapout = mapout.scaled(128, 128);
     ui->label->setPixmap(QPixmap::fromImage(mapout));
-
-    QPixmap map(100, 100);
-    QPainter p(&map);
-    p.fillRect(QRect(0, 0, 100, 100), Qt::SolidPattern);
-    p.drawText(10, 10, "10");
 }
