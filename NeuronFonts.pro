@@ -22,10 +22,12 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    neuron.cpp
+    neuron.cpp \
+    neuronfonts.cpp
 
 HEADERS  += mainwindow.h \
-    neuron.h
+    neuron.h \
+    neuronfonts.h
 
 FORMS    += mainwindow.ui
 
