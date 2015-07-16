@@ -25,15 +25,23 @@ public:
     QString MemoryFile() const;
 
 signals:
+    void glyphReadedFromMemory(uint id);
 
 public slots:
     void setMemoryFile(const QString &memfile);
     void openMemory();
+    void recognize(const QPixmap &image, uint &neuronid);
+    void recognize(const QString &fimage, uint &neuronid);
+    void study(uint &neuronid);
+    void getMemoryIcon(uint neuronid, QByteArray &out);
 
 private:
+    void start();
     QString _memory;
     QSqlDatabase _db;
     QList<Neuron<MEMORY_TYPE,29,29>*> neuro_web;
+
+    int max_n;
 };
 
 #endif // NEURONFONTS_H

@@ -11,6 +11,8 @@ NeuronFonts::NeuronFonts(QObject *parent) : QObject(parent)
     {
         neuro_web.push_back(new Neuron<MEMORY_TYPE,IMG_SIZE,IMG_SIZE>());
     }
+
+    max_n = -1;
 }
 
 NeuronFonts::~NeuronFonts()
@@ -75,4 +77,133 @@ void NeuronFonts::openMemory()
             }
         }
     }
+}
+
+void NeuronFonts::start()
+{
+    for (int i = 0; i < neuro_web.size(); i++)
+    {
+        neuro_web[i]->weight = 0;
+        neuro_web[i]->output = 50;
+        neuro_web[i]->name = QString::number(i);
+
+        QSqlQuery q(_db);
+        q.prepare("select * from memory where id = ?");
+        q.bindValue(0, i);
+
+        if (q.exec())
+        {
+            q.next();
+            memcpy(neuro_web[i]->memory, q.value(1).toByteArray().data(), IMG_DATA_SIZE);
+            emit glyphReadedFromMemory(i);
+        }
+    }
+}
+
+void NeuronFonts::recognize(const QPixmap &image, uint &neuronid)
+{
+    QImage map = image.toImage().scaled(IMG_SIZE, IMG_SIZE, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+
+    MEMORY_TYPE img[IMG_SIZE][IMG_SIZE];
+    int max = 0;
+
+    max_n = -1;
+    memset(img, 0, sizeof(img));
+
+    for (int x = 0; x < IMG_SIZE; x++)
+    {
+        for (int y = 0; y < IMG_SIZE; y++)
+        {
+            QRgb c = map.pixel(x, y);
+            img[x][y] = (qRed(c) + qGreen(c) + qBlue(c)) / 3;
+        }
+    }
+
+    for (int i = 0; i < neuro_web.size(); i++)
+    {
+        for (int x = 0; x < IMG_SIZE; x++)
+        {
+            for (int y = 0; y < IMG_SIZE; y++)
+            {
+                neuro_web[i]->input[x][y] = img[x][y];
+            }
+        }
+    }
+
+    for (int i = 0; i < neuro_web.size(); i++)
+    {
+        for (int x = 0; x < IMG_SIZE; x++)
+        {
+            for (int y = 0; y < IMG_SIZE; y++)
+            {
+                int n = neuro_web[i]->memory[x][y];
+                int m = neuro_web[i]->input[x][y];
+
+                if ((abs(m - n) < 120))
+                {
+                    if (m < 250)
+                        neuro_web[i]->weight = neuro_web[i]->weight + 1;
+                }
+                if (m != 0)
+                {
+                    if (m < 250)
+                    {
+                        n = (n + (n + m) / 2) / 2;
+                    }
+                    neuro_web[i]->memory[x][y] = n;
+                }
+                else if (n != 0)
+                {
+                    if (m < 250)
+                    {
+                        n = (n + (n + m) / 2) / 2;
+                    }
+                }
+                neuro_web[i]->memory[x][y] = n;
+            }
+        }
+
+        if (neuro_web[i]->weight > max)
+        {
+            max = neuro_web[i]->weight;
+            neuronid = max_n = i;
+        }
+    }
+}
+
+void NeuronFonts::recognize(const QString &fimage, uint &neuronid)
+{
+    QPixmap map;
+
+    if (map.load(fimage))
+    {
+        recognize(map, neuronid);
+    }
+    else
+    {
+        neuronid = -1;
+    }
+}
+
+void NeuronFonts::study(uint &neuronid)
+{
+    QSqlQuery q(_db);
+    QByteArray data(IMG_DATA_SIZE, 0);
+    data.setRawData((const char*)neuro_web[neuronid]->memory, IMG_DATA_SIZE);
+
+    q.prepare("update memory set mem = :mem where id = :id");
+    q.bindValue(":id", neuronid);
+    q.bindValue(":mem", data);
+
+    q.exec();
+
+    start();
+}
+
+void NeuronFonts::getMemoryIcon(uint neuronid, QByteArray &out)
+{
+    out.clear();
+    out.resize(IMG_DATA_SIZE);
+
+    out.setRawData((const char*)neuro_web[neuronid]->memory, IMG_DATA_SIZE);
 }
