@@ -17,6 +17,11 @@ greaterThan(QT_MAJOR_VERSION, 4): {
     }
 }
 
+win32: {
+    QT     += axserver
+    RC_FILE = neuronfonts.rc
+}
+
 TARGET = NeuronFonts
 TEMPLATE = app
 

@@ -5,12 +5,11 @@
 #include <neuron.h>
 #include <QDir>
 #include <QListWidget>
+#include "neuronfonts.h"
 
 namespace Ui {
 class MainWindow;
 }
-
-#define MEMORY_TYPE quint16
 
 class MainWindow : public QMainWindow
 {

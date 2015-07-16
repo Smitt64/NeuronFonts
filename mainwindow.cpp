@@ -10,10 +10,6 @@
 #include <QPalette>
 #include <QSysInfo>
 
-#define IMG_SIZE 29
-#define IMG_DATA_SIZE (IMG_SIZE * IMG_SIZE * sizeof(MEMORY_TYPE))
-#define UNICODE_A 0x0410
-
 #ifdef WIN_DWM
 #include <QtWinExtras>
 #endif
