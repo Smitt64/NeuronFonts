@@ -14,7 +14,20 @@ QAXFACTORY_END()
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+
+#ifdef Q_OS_WIN
+    if (QAxFactory::isServer())
+    {
+        a.setQuitOnLastWindowClosed(false);
+        return a.exec();
+    }
+
+    QAxFactory::startServer();
+#endif
     MainWindow w;
+#ifdef Q_OS_WIN
+    QAxFactory::registerActiveObject(&w);
+#endif
     w.show();
 
     return a.exec();

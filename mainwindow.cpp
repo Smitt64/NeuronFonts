@@ -19,8 +19,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    connect(&nf, SIGNAL(glyphReadedFromMemory(uint)), SLOT(glyphReadedFromMemory(uint)));
-    nf.openMemory();
+    nf = new NeuronFonts(this);
+    connect(nf, SIGNAL(glyphReadedFromMemory(uint)), SLOT(glyphReadedFromMemory(uint)));
+    nf->openMemory();
 
     clearMemoryAction = new QAction(tr("Forget the letter"), ui->listWidget);
     ui->listWidget->addAction(clearMemoryAction);
@@ -65,7 +66,7 @@ void MainWindow::onClearMemoryAction()
     int memid = item->text().at(0).unicode() - UNICODE_A;
 
     ui->listWidget->clear();
-    nf.clearMemory(memid);
+    nf->clearMemory(memid);
     on_listWidget_itemDoubleClicked(item);
 }
 
@@ -82,7 +83,7 @@ void MainWindow::on_pushButton_clicked()
         m = m.scaled(128, 128, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
         ui->label->setPixmap(m);
         uint max_n = -1;
-        nf.recognize(s, max_n);
+        nf->recognize(s, max_n);
 
         if (max_n >= 0)
         {
@@ -101,7 +102,7 @@ void MainWindow::on_pushButton_clicked()
 
             uint newid = ch.unicode() - UNICODE_A;
             ui->listWidget->clear();
-            nf.study(newid);
+            nf->study(newid);
         }
     }
 }
@@ -115,7 +116,7 @@ void MainWindow::on_listWidget_itemDoubleClicked(QListWidgetItem *item)
     {
         for (int y = 0; y < IMG_SIZE; y++)
         {
-            mapout.setPixel(x, y, qRgb(nf.getMemoryValue(newid, x, y), nf.getMemoryValue(newid, x, y), nf.getMemoryValue(newid, x, y)));
+            mapout.setPixel(x, y, qRgb(nf->getMemoryValue(newid, x, y), nf->getMemoryValue(newid, x, y), nf->getMemoryValue(newid, x, y)));
         }
     }
     mapout = mapout.scaled(128, 128);

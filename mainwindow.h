@@ -28,7 +28,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    NeuronFonts nf;
+    NeuronFonts *nf;
 
     QAction *clearMemoryAction;
 #ifdef WIN_DWM
