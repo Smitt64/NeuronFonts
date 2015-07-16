@@ -33,7 +33,7 @@ private:
     QList<Neuron<MEMORY_TYPE,29,29>*> neuro_web;
 
     QAction *clearMemoryAction;
-#if QT_VERSION >= 0x050000 && defined(Q_OS_WIN)
+#ifdef WIN_DWM
     QMargins margin;
 #endif
 };

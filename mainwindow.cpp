@@ -14,7 +14,7 @@
 #define IMG_DATA_SIZE (IMG_SIZE * IMG_SIZE * sizeof(MEMORY_TYPE))
 #define UNICODE_A 0x0410
 
-#if QT_VERSION >= 0x050000
+#ifdef WIN_DWM
 #include <QtWinExtras>
 #endif
 
@@ -71,16 +71,20 @@ MainWindow::MainWindow(QWidget *parent) :
 
     start();
 
-#if QT_VERSION >= 0x050000 && defined(Q_OS_WIN)
+#ifdef WIN_DWM
     if (QSysInfo::windowsVersion() >= QSysInfo::WV_VISTA && QSysInfo::windowsVersion() <= QSysInfo::WV_WINDOWS10)
     {
-        QPalette palette = ((QWidget*)this)->palette();
         margin = QMargins(4, 4, 4, ui->statusBar->height());
         setAttribute(Qt::WA_NoSystemBackground);
         QtWin::enableBlurBehindWindow(this);
         QtWin::extendFrameIntoClientArea(this, margin);
+
+        // uncomment to use non transparent background
+        /*
+         QPalette palette = ((QWidget*)this)->palette();
+         centralWidget()->setStyleSheet(QString("QWidget#centralWidget {background: %1}").arg(palette.color(QPalette::Window).name()));
+         */
     }
-    //centralWidget()->setStyleSheet(QString("QWidget#centralWidget {background: %1}").arg(palette.color(QPalette::Window).name()));
 #endif
 
     connect(clearMemoryAction, SIGNAL(triggered(bool)), SLOT(onClearMemoryAction()));

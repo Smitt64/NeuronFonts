@@ -4,14 +4,21 @@
 #
 #-------------------------------------------------
 
-QT += core gui
-QT += sql
+QT += core gui sql
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets winextras
+greaterThan(QT_MAJOR_VERSION, 4): {
+    QT += widgets
+
+    win32: {
+        qtHaveModule(winextras): {
+            QT += winextras
+            DEFINES += WIN_DWM
+        }
+    }
+}
 
 TARGET = NeuronFonts
 TEMPLATE = app
-
 
 SOURCES += main.cpp\
         mainwindow.cpp \
@@ -21,3 +28,8 @@ HEADERS  += mainwindow.h \
     neuron.h
 
 FORMS    += mainwindow.ui
+
+UI_DIR = .build
+MOC_DIR = .build
+RCC_DIR = .build
+OBJECTS_DIR = .build
