@@ -34,6 +34,8 @@ public slots:
     void recognize(const QString &fimage, uint &neuronid);
     void study(uint &neuronid);
     void getMemoryIcon(uint neuronid, QByteArray &out);
+    int getMemoryValue(uint neuronid, uint x, uint y);
+    void clearMemory(uint neuronid);
 
 private:
     void start();

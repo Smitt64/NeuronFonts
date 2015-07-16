@@ -76,6 +76,11 @@ void NeuronFonts::openMemory()
                 }
             }
         }
+        start();
+    }
+    else
+    {
+        qDebug() << "Can't open memory file " << _memory;
     }
 }
 
@@ -198,6 +203,35 @@ void NeuronFonts::study(uint &neuronid)
     q.exec();
 
     start();
+}
+
+void NeuronFonts::clearMemory(uint neuronid)
+{
+    MEMORY_TYPE k[IMG_SIZE][IMG_SIZE];
+    for (int x = 0; x < IMG_SIZE; x++)
+    {
+        for (int y = 0; y < IMG_SIZE; y++)
+        {
+            k[x][y] = 255;
+        }
+    }
+
+    QSqlQuery q;
+    QByteArray data(IMG_DATA_SIZE, 0);
+    data.setRawData((const char*)k, IMG_DATA_SIZE);
+
+    q.prepare("update memory set mem = :mem where id = :id");
+    q.bindValue(":id", neuronid);
+    q.bindValue(":mem", data);
+
+    q.exec();
+
+    start();
+}
+
+int NeuronFonts::getMemoryValue(uint neuronid, uint x, uint y)
+{
+    return neuro_web[neuronid]->memory[x][y];
 }
 
 void NeuronFonts::getMemoryIcon(uint neuronid, QByteArray &out)

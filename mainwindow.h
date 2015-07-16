@@ -24,12 +24,11 @@ private slots:
     void on_listWidget_itemDoubleClicked(QListWidgetItem *item);
     void onClearMemoryAction();
 
+    void glyphReadedFromMemory(uint id);
+
 private:
-    void start(bool onlyclear = false);
-    void recognize();
     Ui::MainWindow *ui;
-    QDir memdir;
-    QList<Neuron<MEMORY_TYPE,29,29>*> neuro_web;
+    NeuronFonts nf;
 
     QAction *clearMemoryAction;
 #ifdef WIN_DWM
