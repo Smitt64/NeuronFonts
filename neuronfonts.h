@@ -6,17 +6,26 @@
 #include <QtSql>
 #include "neuron.h"
 
+#ifdef Q_OS_WIN
+#include <QAxBindable>
+#endif
+
 #define MEMORY_TYPE quint16
 #define IMG_SIZE 29
 #define IMG_DATA_SIZE (IMG_SIZE * IMG_SIZE * sizeof(MEMORY_TYPE))
 #define UNICODE_A 0x0410
 
 class NeuronFonts : public QObject
+#ifdef Q_OS_WIN
+        , QAxBindable
+#endif
 {
     Q_OBJECT
 
     Q_CLASSINFO("ClassID", "{C096E987-A36E-447F-AEA3-2754B075AFEE}")
     Q_CLASSINFO("InterfaceID", "{5CD93C84-FD9A-41C2-B35B-8882E7263075}")
+    Q_CLASSINFO("EventsID", "{6BDCC1F9-A7C6-4285-A512-E9E59CB9D296}")
+    Q_CLASSINFO("RegisterObject", "yes")
 
     Q_PROPERTY(QString MemoryFile READ MemoryFile WRITE setMemoryFile)
 public:
