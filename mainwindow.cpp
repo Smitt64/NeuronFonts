@@ -82,7 +82,7 @@ void MainWindow::on_pushButton_clicked()
     {
         m = m.scaled(128, 128, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
         ui->label->setPixmap(m);
-        uint max_n = -1;
+        int max_n = -1;
         nf->recognize(s, max_n);
 
         if (max_n >= 0)
@@ -100,7 +100,7 @@ void MainWindow::on_pushButton_clicked()
             if (ch.unicode() < UNICODE_A || ch.unicode() > UNICODE_A + 32)
                 return;
 
-            uint newid = ch.unicode() - UNICODE_A;
+            int newid = ch.unicode() - UNICODE_A;
             ui->listWidget->clear();
             nf->study(newid);
         }

@@ -25,7 +25,6 @@ class NeuronFonts : public QObject
     Q_CLASSINFO("ClassID", "{C096E987-A36E-447F-AEA3-2754B075AFEE}")
     Q_CLASSINFO("InterfaceID", "{5CD93C84-FD9A-41C2-B35B-8882E7263075}")
     Q_CLASSINFO("EventsID", "{6BDCC1F9-A7C6-4285-A512-E9E59CB9D296}")
-    Q_CLASSINFO("RegisterObject", "yes")
 
     Q_PROPERTY(QString MemoryFile READ MemoryFile WRITE setMemoryFile)
 public:
@@ -39,9 +38,9 @@ signals:
 public slots:
     void setMemoryFile(const QString &memfile);
     void openMemory();
-    void recognize(const QPixmap &image, uint &neuronid);
-    void recognize(const QString &fimage, uint &neuronid);
-    void study(uint &neuronid);
+    void recognize(const QPixmap &image, int &neuronid);
+    void recognizefile(const QString &fimage, int &neuronid);
+    void study(int &neuronid);
     void getMemoryIcon(uint neuronid, QByteArray &out);
     int getMemoryValue(uint neuronid, uint x, uint y);
     void clearMemory(uint neuronid);

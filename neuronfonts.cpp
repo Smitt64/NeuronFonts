@@ -1,6 +1,7 @@
 #include "neuronfonts.h"
 #include <QtCore>
 #include <QDebug>
+#include <QMessageBox>
 
 NeuronFonts::NeuronFonts(QObject *parent) : QObject(parent)
 {
@@ -76,12 +77,12 @@ void NeuronFonts::openMemory()
                 }
             }
         }
-        start();
     }
     else
     {
         qDebug() << "Can't open memory file " << _memory;
     }
+    start();
 }
 
 void NeuronFonts::start()
@@ -105,7 +106,7 @@ void NeuronFonts::start()
     }
 }
 
-void NeuronFonts::recognize(const QPixmap &image, uint &neuronid)
+void NeuronFonts::recognize(const QPixmap &image, int &neuronid)
 {
     QImage map = image.toImage().scaled(IMG_SIZE, IMG_SIZE, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
 
@@ -176,12 +177,13 @@ void NeuronFonts::recognize(const QPixmap &image, uint &neuronid)
     }
 }
 
-void NeuronFonts::recognize(const QString &fimage, uint &neuronid)
+void NeuronFonts::recognizefile(const QString &fimage, int &neuronid)
 {
     QPixmap map;
 
     if (map.load(fimage))
     {
+        printf("recognizefile start");
         recognize(map, neuronid);
     }
     else
@@ -190,7 +192,7 @@ void NeuronFonts::recognize(const QString &fimage, uint &neuronid)
     }
 }
 
-void NeuronFonts::study(uint &neuronid)
+void NeuronFonts::study(int &neuronid)
 {
     QSqlQuery q(_db);
     QByteArray data(IMG_DATA_SIZE, 0);

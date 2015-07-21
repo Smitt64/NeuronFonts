@@ -1,8 +1,6 @@
 QT -= core gui
-
-HEADERS += \
-    NeuronFontsCom.h
+TEMPLATE = app
+CONFIG += console
 
 SOURCES += \
-    comtest.cpp \
-    NeuronFonts_i.c
+    comtest.cpp
