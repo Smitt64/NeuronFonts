@@ -25,6 +25,7 @@ class NeuronFonts : public QObject
     Q_CLASSINFO("ClassID", "{C096E987-A36E-447F-AEA3-2754B075AFEE}")
     Q_CLASSINFO("InterfaceID", "{5CD93C84-FD9A-41C2-B35B-8882E7263075}")
     Q_CLASSINFO("EventsID", "{6BDCC1F9-A7C6-4285-A512-E9E59CB9D296}")
+    Q_CLASSINFO("Creatable", "yes")
 
     Q_PROPERTY(QString MemoryFile READ MemoryFile WRITE setMemoryFile)
 public:

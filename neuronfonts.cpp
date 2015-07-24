@@ -1,11 +1,12 @@
 #include "neuronfonts.h"
 #include <QtCore>
+#include <QApplication>
 #include <QDebug>
 #include <QMessageBox>
 
 NeuronFonts::NeuronFonts(QObject *parent) : QObject(parent)
 {
-    QDir memdir = QDir::current();
+    QDir memdir = QDir(QApplication::applicationDirPath());
     _memory = memdir.absoluteFilePath("memory.db");
 
     for (int i = 0; i < 32; i++)
